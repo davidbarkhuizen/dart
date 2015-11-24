@@ -74,7 +74,7 @@ def load_columns(source_path, start_date, end_date):
 
 	return (dates, high, low, openn, close, volume)
 
-def analyse(source_path, start_date, end_date, label, out_root):
+def analyse(source_path, start_date, end_date, label, out_root, gen_title):
 
 	(dates, high, low, openn, close, volume) = load_columns(source_path, start_date, end_date)
 
@@ -91,7 +91,7 @@ def analyse(source_path, start_date, end_date, label, out_root):
 
 	file_name = label.replace(' ', '') + '.png'
 
-	return gen_analyses(label, start_date, end_date, dates, openn, high, low, close, volume, out_root)
+	return gen_analyses(label, start_date, end_date, dates, openn, high, low, close, volume, out_root, gen_title)
 
 def get_analysis_parameters():
 
@@ -123,6 +123,16 @@ def print_logo():
 def format_dt(dt):
 	return dt.strftime('%Y-%m-%d')
 
+def gen_title(symbol, title, start_date, end_date):
+
+	return '{0}\n{1}'.format(
+		'{0} ({1} - {2})'.format(
+			symbol, 
+			start_date.strftime('%Y-%m-%d'), 
+			end_date.strftime('%Y-%m-%d')),
+		title
+		)
+
 def go():
 
 	print_logo()
@@ -132,7 +142,7 @@ def go():
 	start_date = datetime.strptime(start_date, '%Y-%m-%d') 
 	end_date = datetime.strptime(end_date, '%Y-%m-%d')
 
-	analyses = analyse(data_path, start_date, end_date, label, out_path)
+	analyses = analyse(data_path, start_date, end_date, label, out_path, gen_title)
 	for analysis in analyses:
 
 		report_file_path = out_path + analysis.name.replace(' ','') + '.txt'

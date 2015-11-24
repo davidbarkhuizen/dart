@@ -15,7 +15,7 @@ class Analysis:
 		self.plot_ref = plot_ref
 		self.report = report
 
-def gen_dual_series_scatter_plot(dates, values, volume, start_date, end_date):
+def gen_dual_series_scatter_plot(symbol, dates, values, volume, start_date, end_date, gen_title):
 	'''
 	extract specified slice from total series, generate and return matplotlib figure for slice
 	'''
@@ -75,6 +75,7 @@ def gen_dual_series_scatter_plot(dates, values, volume, start_date, end_date):
 	# volume plot, same x axis, diff y axis
 	v = np.array(volume_slice)
 	got_vol_series = False
+	print(len(v), len(x))
 	if ((volume_slice != None) and (len(v) == len(x))):  
 		ax2 = ax.twinx()   
 		fig.autofmt_xdate(rotation=90)
@@ -83,7 +84,9 @@ def gen_dual_series_scatter_plot(dates, values, volume, start_date, end_date):
 
 	ax.grid(False)  
 	ax.set_ylabel('Closing Price')
-	ax.set_title('Closing Price & Volume Traded')
+
+	title = gen_title(symbol, 'Closing Price & Volume Traded', slice_start_date, slice_end_date)
+	ax.set_title(title)
 	
 	fig.autofmt_xdate(rotation=90)
 	
@@ -111,9 +114,10 @@ def gen_dual_series_scatter_plot(dates, values, volume, start_date, end_date):
 
 	return plt
 
-def gen_day_move_plots(dates, openn, close, start_date, end_date) :
+def analyse_daily_open_to_close_movement(symbol, dates, openn, close, start_date, end_date, gen_title) :
 
 	# extract desired time-slice from total series  
+	#
 	if (dates[0] < dates[len(dates) - 1]):
 		start_idx = 0
 		for i in range(0, len(dates)):
@@ -150,7 +154,8 @@ def gen_day_move_plots(dates, openn, close, start_date, end_date) :
 		start_idx = 0
 		end_idx = len(dates)
 		
-	# cut slice
+	# cut time slice
+	#
 	date_slice = dates[start_idx : end_idx]
 	slice_start_date = dates[start_idx]
 	slice_end_date = dates[end_idx]
@@ -162,7 +167,11 @@ def gen_day_move_plots(dates, openn, close, start_date, end_date) :
 	for i in range(len(open_slice)):
 		delta.append(float(100 * (close_slice[i] - open_slice[i]) / close_slice[i]) )
 	
+	# -------------------------------------
+	# % intra-day movement - time series
+
 	# generate matplotlib plot
+	#
 	x = np.array(date_slice)
 	y = np.array(delta)
 	fever_fig = plt.figure()
@@ -170,9 +179,11 @@ def gen_day_move_plots(dates, openn, close, start_date, end_date) :
 	ax.plot(x,y)
 	# leg = ax.legend(('Model length'), 'upper center', shadow=True)
 	
+	title = gen_title(symbol, '% (close - open) / open', slice_start_date, slice_end_date)
+
 	ax.grid(False)  
 	ax.set_ylabel('100 * (Close - Open) / Open')
-	ax.set_title('Day Move as a Percentage of Opening Price')
+	ax.set_title(title)
 	# date intervals & markers
 	(formatter, locator) = tick_info(slice_start_date, slice_end_date)
 	ax.xaxis.set_major_formatter(formatter) 
@@ -181,7 +192,8 @@ def gen_day_move_plots(dates, openn, close, start_date, end_date) :
 	ax.set_xlim([slice_start_date, slice_end_date])
 	ax.set_xlabel('Date')
 	
-	# ------------
+	# -------------------------------------
+	# % intra-day movement - distribution
 	
 	h = Histogram(delta)
 	left_edge = []
@@ -200,13 +212,16 @@ def gen_day_move_plots(dates, openn, close, start_date, end_date) :
 	ax.set_xlim(h.min, h.max)
 	ax.set_ylabel('% of Population')
 	ax.set_xlabel('Move i.t.o Open : 100 * (Close - Open) / Open')
-	ax.set_title('Distribution of Daily Movements')
+	
+	title = gen_title(symbol, 'Distribution of Daily Movements', slice_start_date, slice_end_date)
+	ax.set_title(title)
 
 	return fever_fig, dist_fig
 	
-def gen_intraday_volatility_plots(dates, high, low, close, start_date, end_date) :
+def gen_intraday_volatility_plots(symbol, dates, high, low, close, start_date, end_date, gen_title) :
 
 	# extract desired time-slice from total series  
+	#
 	if (dates[0] < dates[len(dates) - 1]):
 		start_idx = 0
 		for i in range(0, len(dates)):
@@ -266,7 +281,10 @@ def gen_intraday_volatility_plots(dates, high, low, close, start_date, end_date)
 	
 	ax.grid(False)  
 	ax.set_ylabel('100 * (High - Low) / Close')
-	ax.set_title('Intra-Day Range as a Percentage of Closing Price')
+
+	title = gen_title(symbol, 'Intra-Day Range as a Percentage of Closing Price', slice_start_date, slice_end_date)
+	ax.set_title(title)
+
 	# date intervals & markers
 	(formatter, locator) = tick_info(slice_start_date, slice_end_date)
 	ax.xaxis.set_major_formatter(formatter) 
@@ -294,11 +312,13 @@ def gen_intraday_volatility_plots(dates, high, low, close, start_date, end_date)
 	ax.set_xlim(h.min, h.max)
 	ax.set_ylabel('% of Population')
 	ax.set_xlabel('Intra-Day Range i.t.o Close : 100 * (High - Low) / Close')
-	ax.set_title('Distribution of Intra-Day Range')
+
+	title = gen_title(symbol, 'Distribution of Intra-Day Range', slice_start_date, slice_end_date)
+	ax.set_title(title)
 
 	return fever_fig, dist_fig
  
-def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, volume, output_root):
+def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, volume, output_root, gen_title):
 	
 	analyses = []
 		
@@ -314,15 +334,15 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	
 	# price, volume as a fn of time
 	#
-	price_vol_fig = gen_dual_series_scatter_plot(dates, close, volume, start_date, end_date)    
+	price_vol_fig = gen_dual_series_scatter_plot(symbol, dates, close, volume, start_date, end_date, gen_title)    
 	price_vol_fig_img_file_name = 'price_volume.png'
 	save_path = output_root + '/' + price_vol_fig_img_file_name
 	price_vol_fig.savefig(save_path) 
 	analyses.append(Analysis('Price-Vol Time Series', price_vol_fig_img_file_name, []))  
 	
-	# MOVES
+	# OPEN TO CLOSE MOVE
 	
-	(move_fever_fig, move_dist_fig) = gen_day_move_plots(dates, openn, close, start_date, end_date)
+	(move_fever_fig, move_dist_fig) = analyse_daily_open_to_close_movement(symbol, dates, openn, close, start_date, end_date, gen_title)
 	
 	move_fever_fname = 'move_fever.png'  
 	save_path = output_root + '/' + move_fever_fname
@@ -334,9 +354,9 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	move_dist_fig.savefig(save_path)
 	analyses.append(Analysis('Distribution of Daily Moves', move_dist_fname, []))
 	
-	# VOLATILITY
+	# INTRADAY VOLATILITY
 	
-	fever_fig, dist_fig = gen_intraday_volatility_plots(dates, high, low, close, start_date, end_date)    
+	fever_fig, dist_fig = gen_intraday_volatility_plots(symbol, dates, high, low, close, start_date, end_date, gen_title)    
 	
 	intraday_volatility_fever_fname = 'intraday_volatility_fever.png'  
 	save_path = output_root + '/' + intraday_volatility_fever_fname
@@ -354,11 +374,12 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	lopen = [math.log(x) for x in openn]
 	lhigh = [math.log(x) for x in high]
 	llow = [math.log(x) for x in low]
-	lclose = [math.log(x) for x in close]    
+	lclose = [math.log(x) for x in close] 
+	lvol = [math.log(x) if x > 0 else 0 for x in volume]    
 	
 	# LOG CLOSE TIME SERIES
 	
-	log_price_vol_fig = gen_dual_series_scatter_plot(dates, lclose, [], start_date, end_date)    
+	log_price_vol_fig = gen_dual_series_scatter_plot(symbol, dates, lclose, lvol, start_date, end_date, gen_title)    
 	log_price_vol_fig_img_file_name = 'log_price_volume.png'
 	save_path = output_root + '/' + log_price_vol_fig_img_file_name
 	log_price_vol_fig.savefig(save_path) 
@@ -366,7 +387,7 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	
 	# LOG INTRA-DAY RANGE
 	
-	log_fever_fig, log_dist_fig = gen_intraday_volatility_plots(dates, lhigh, llow, lclose, start_date, end_date)      
+	log_fever_fig, log_dist_fig = gen_intraday_volatility_plots(symbol, dates, lhigh, llow, lclose, start_date, end_date, gen_title)      
 	log_intraday_volatility_fever_fname = 'log_intraday_volatility_fever.png'  
 	save_path = output_root + '/' + log_intraday_volatility_fever_fname
 	log_fever_fig.savefig(save_path)

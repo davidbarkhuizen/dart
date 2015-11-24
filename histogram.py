@@ -15,7 +15,7 @@ class Histogram(DataSet):
   # sturge : L = (x_max - x_min) / (1 + 1.44 * n)
   # rule of thumb : L = (x_max - x_min) / sqrt(n)
   '''
-  def __init__(self, data, interval_type=ClassIntervalType.STURGE):
+  def __init__(self, data, interval_type=ClassIntervalType.ROOT):
     
     f = []
     for d in data:
@@ -48,7 +48,7 @@ class Histogram(DataSet):
     '''
     interval = None
     if class_interval_type == ClassIntervalType.ROOT:
-      interval = (max - min) / (1 + 1.44 * math.Log(n))
+      interval = (max - min) / (1 + 1.44 * math.log(self.n))
     elif class_interval_type == ClassIntervalType.STURGE:
       interval = (max - min) / math.sqrt(self.n)
     elif class_interval_type == ClassIntervalType.THREESIGMA:
