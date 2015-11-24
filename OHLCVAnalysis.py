@@ -58,9 +58,9 @@ class OHLCVAnalysis:
 		self.report_log.append('Max = %s - %s' % (str(max), max_date))
 		self.report_log.append('Min = %s - %s' % (str(min), min_date))
 		
-		#~ h = Histogram(series)
-		#~ for l in h.report():
-			#~ self.report_log.append(l)
+		h = Histogram(series)
+		for l in h.report():
+			self.report_log.append(l)
 		
 	def report(self):
 		return self.report_log

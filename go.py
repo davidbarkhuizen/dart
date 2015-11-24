@@ -76,21 +76,24 @@ def load_columns(source_path, start_date, end_date):
 
 def analyse(source_path, start_date, end_date, label, out_root):
 
-	start_date = datetime.strptime(start_date, '%Y-%m-%d') 
-	end_date = datetime.strptime(end_date, '%Y-%m-%d')
-
 	(dates, high, low, openn, close, volume) = load_columns(source_path, start_date, end_date)
+
+	max_data_date = max(dates)
+	if end_date > max_data_date:
+		end_date = max_data_date
+
+	min_data_date = min(dates)
+	if start_date < min_data_date:
+		start_date = min_data_date
+
+	print('source data @ {0}'.format(source_path))
+	print('time sample bounds : {0} - {1}'.format(format_dt(start_date), format_dt(end_date)))
 
 	file_name = label.replace(' ', '') + '.png'
 
-	gen_analyses(label, start_date, end_date, dates, openn, high, low, close, volume, out_root)
-
-# plt.savefig(file_name, bbox_inches='tight')
-#analyse()
+	return gen_analyses(label, start_date, end_date, dates, openn, high, low, close, volume, out_root)
 
 def get_analysis_parameters():
-
-	print('mart - real time market analysis')
 
 	parser = argparse.ArgumentParser(prog='mart')
 
@@ -110,9 +113,30 @@ def get_analysis_parameters():
 
 	return (data_path, start_date, end_date, label, out_path)
 
+def print_logo():
+
+	logo = 'MART = real time market analysis | 2015 | david barkhuizen'
+	print('=-'*int(len(logo)/2))
+	print(logo)
+	print('=-'*int(len(logo)/2))
+
+def format_dt(dt):
+	return dt.strftime('%Y-%m-%d')
+
 def go():
-	
+
+	print_logo()
+
 	(data_path, start_date, end_date, label, out_path) = get_analysis_parameters()
-	analyse(data_path, start_date, end_date, label, out_path)
+	
+	start_date = datetime.strptime(start_date, '%Y-%m-%d') 
+	end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+	analyses = analyse(data_path, start_date, end_date, label, out_path)
+	for analysis in analyses:
+
+		report_file_path = out_path + analysis.name.replace(' ','') + '.txt'
+		with open(report_file_path, 'wt') as report_file:
+			report_file.write('\n'.join(analysis.report))
 
 go()

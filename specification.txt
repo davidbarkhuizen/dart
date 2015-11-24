@@ -2,7 +2,7 @@
 GOALS & TASKS
 
 DOING
-- switch to command line driven, using most modern command line options parsing lib
+- name all files correctly, fully and meaningfully
 
 TODO
 - change to use canonical OS lib based path handling
@@ -10,4 +10,4 @@ TODO
 - improve handling of graphs - introduce graph object ?
 
 DONE
-- 
+- switch to command line driven, using most modern command line options parsing lib

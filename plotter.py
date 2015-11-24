@@ -298,7 +298,7 @@ def gen_intraday_volatility_plots(dates, high, low, close, start_date, end_date)
 
 	return fever_fig, dist_fig
  
-def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, volume, OUTPUT_ROOT):
+def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, volume, output_root):
 	
 	analyses = []
 		
@@ -316,7 +316,7 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	#
 	price_vol_fig = gen_dual_series_scatter_plot(dates, close, volume, start_date, end_date)    
 	price_vol_fig_img_file_name = 'price_volume.png'
-	save_path = OUTPUT_ROOT + '/' + price_vol_fig_img_file_name
+	save_path = output_root + '/' + price_vol_fig_img_file_name
 	price_vol_fig.savefig(save_path) 
 	analyses.append(Analysis('Price-Vol Time Series', price_vol_fig_img_file_name, []))  
 	
@@ -325,12 +325,12 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	(move_fever_fig, move_dist_fig) = gen_day_move_plots(dates, openn, close, start_date, end_date)
 	
 	move_fever_fname = 'move_fever.png'  
-	save_path = OUTPUT_ROOT + '/' + move_fever_fname
+	save_path = output_root + '/' + move_fever_fname
 	move_fever_fig.savefig(save_path)
 	analyses.append(Analysis('Day Move Fever', move_fever_fname, []))
 	
 	move_dist_fname = 'move_dist.png'  
-	save_path = OUTPUT_ROOT + '/' + move_dist_fname
+	save_path = output_root + '/' + move_dist_fname
 	move_dist_fig.savefig(save_path)
 	analyses.append(Analysis('Distribution of Daily Moves', move_dist_fname, []))
 	
@@ -339,12 +339,12 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	fever_fig, dist_fig = gen_intraday_volatility_plots(dates, high, low, close, start_date, end_date)    
 	
 	intraday_volatility_fever_fname = 'intraday_volatility_fever.png'  
-	save_path = OUTPUT_ROOT + '/' + intraday_volatility_fever_fname
+	save_path = output_root + '/' + intraday_volatility_fever_fname
 	fever_fig.savefig(save_path)
 	analyses.append(Analysis('Intra-Day Range Fever', intraday_volatility_fever_fname, []))
 	
 	intraday_volatility_dist_fname = 'intraday_volatility_dist.png'  
-	save_path = OUTPUT_ROOT + '/' + intraday_volatility_dist_fname
+	save_path = output_root + '/' + intraday_volatility_dist_fname
 	dist_fig.savefig(save_path)
 	analyses.append(Analysis('Distribution of Intra-day Range', intraday_volatility_dist_fname, []))
 	
@@ -360,7 +360,7 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	
 	log_price_vol_fig = gen_dual_series_scatter_plot(dates, lclose, [], start_date, end_date)    
 	log_price_vol_fig_img_file_name = 'log_price_volume.png'
-	save_path = OUTPUT_ROOT + '/' + log_price_vol_fig_img_file_name
+	save_path = output_root + '/' + log_price_vol_fig_img_file_name
 	log_price_vol_fig.savefig(save_path) 
 	analyses.append(Analysis('Log Price Time Series', log_price_vol_fig_img_file_name, []))  
 	
@@ -368,7 +368,7 @@ def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, v
 	
 	log_fever_fig, log_dist_fig = gen_intraday_volatility_plots(dates, lhigh, llow, lclose, start_date, end_date)      
 	log_intraday_volatility_fever_fname = 'log_intraday_volatility_fever.png'  
-	save_path = OUTPUT_ROOT + '/' + log_intraday_volatility_fever_fname
+	save_path = output_root + '/' + log_intraday_volatility_fever_fname
 	log_fever_fig.savefig(save_path)
 	analyses.append(Analysis('Log Intra-Day Range Fever', log_intraday_volatility_fever_fname, []))  
  
