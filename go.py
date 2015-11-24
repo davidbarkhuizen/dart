@@ -147,8 +147,17 @@ def go():
 	# save reports to file
 	#
 	for analysis in analyses:
-		report_file_path = out_path + analysis.name.replace(' ','') + '.txt'
-		with open(report_file_path, 'wt') as report_file:
-			report_file.write('\n'.join(analysis.report))
+
+		file_name_header = analysis.symbol + '_' + analysis.description.replace(' ','')
+
+		report_figure_path = out_path + file_name_header + '.png'
+
+		if analysis.figure: 
+			analysis.figure.savefig(report_figure_path)
+
+		if analysis.text:
+			report_file_path = out_path + file_name_header + '.txt'
+			with open(report_file_path, 'wt') as report_file:
+				report_file.write('\n'.join(analysis.text))
 
 go()
