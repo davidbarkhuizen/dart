@@ -1,0 +1,14 @@
+# csvhandler - david.barkhuizen@gmail.com
+
+def load_csv_list_from_file(file_path):
+  f = open(file_path, 'r')
+  line = f.readline()
+  f.close()
+  splut = line.split(',')
+  tokens = []
+  for token in splut:
+    cleaned = token.strip().lower()
+    if len(cleaned) > 0:
+      tokens.append(cleaned)
+  return tokens
+  

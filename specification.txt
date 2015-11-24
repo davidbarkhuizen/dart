@@ -1,0 +1,13 @@
+
+GOALS & TASKS
+
+DOING
+- switch to command line driven, using most modern command line options parsing lib
+
+TODO
+- change to use canonical OS lib based path handling
+- output both graphs and text summary to file
+- improve handling of graphs - introduce graph object ?
+
+DONE
+- 
