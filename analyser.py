@@ -250,7 +250,7 @@ def gen_intraday_volatility_plots(symbol, dates, high, low, close, start_date, e
 
 	reports = []
 	reports.append(AnalysisReport(symbol, slice_start_date, slice_end_date, 'Intra-Day Range Fever', '', fever_fig))
-	reports.append(AnalysisReport(symbol, slice_start_date, slice_end_date, 'Distribution of Intra-day Range', h.report(), dist_fig))
+	reports.append(AnalysisReport(symbol, slice_start_date, slice_end_date, 'Distribution of Intra-day Range', h.report(date_slice, delta), dist_fig))
 	return reports
  
 def analyse(symbol, start_date, end_date, dates, openn, high, low, close, volume, output_root, gen_title):

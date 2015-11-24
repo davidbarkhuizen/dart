@@ -92,15 +92,46 @@ class Histogram(DataSet):
 				
 		return 100 * the_bin.count() / total
 		
-	def report(self):
+	def report(self, labels = None, values = None, outlier_threshold_percent = 1):
+
 		log = []
+		
 		grand_total = 0
+		
 		for bin in self.bins:
 			grand_total = grand_total + bin.count()
+		
 		for bin in self.bins:
+
 			s = str(bin).ljust(35)
-			count = int(20 * bin.count() / grand_total) 
+			count = int(100 * bin.count() / grand_total) 
 			for i in range(count):
 				s = s + '*'
 			log.append(s)      
+
+		log.append('')
+		
+		if labels and values:
+
+			for bin in self.bins:
+
+				aggregate_percent_of_total = 100 * bin.count() / grand_total
+
+				if aggregate_percent_of_total < outlier_threshold_percent:
+
+					log.append('{0} percent of total population'.format(aggregate_percent_of_total))
+
+					matches = []
+
+					log.append(str(bin))
+
+					for member in bin.members_asc:
+
+						for i in range(len(values)):
+							if float(values[i]) == member:
+								matches.append((labels[i], values[i]))
+
+					for (label, value) in matches:
+						log.append('{0} - {1}'.format(label, value))	      
+
 		return log
