@@ -4,7 +4,7 @@ from datetime import datetime
 import matplotlib
 
 import csv
-from plotter import gen_analyses
+from analyser import analyse
 
 def load_csv_rows(source_path, start_date, end_date, timestamp_format = '%Y-%m-%d'):
 
@@ -74,7 +74,7 @@ def load_columns(source_path, start_date, end_date):
 
 	return (dates, high, low, openn, close, volume)
 
-def analyse(source_path, start_date, end_date, label, out_root, gen_title):
+def launch_analyses(source_path, start_date, end_date, symbol, out_root, gen_title):
 
 	(dates, high, low, openn, close, volume) = load_columns(source_path, start_date, end_date)
 
@@ -89,9 +89,9 @@ def analyse(source_path, start_date, end_date, label, out_root, gen_title):
 	print('source data @ {0}'.format(source_path))
 	print('time sample bounds : {0} - {1}'.format(format_dt(start_date), format_dt(end_date)))
 
-	file_name = label.replace(' ', '') + '.png'
+	file_name = symbol.replace(' ', '') + '.png'
 
-	return gen_analyses(label, start_date, end_date, dates, openn, high, low, close, volume, out_root, gen_title)
+	return analyse(symbol, start_date, end_date, dates, openn, high, low, close, volume, out_root, gen_title)
 
 def get_analysis_parameters():
 
@@ -142,9 +142,11 @@ def go():
 	start_date = datetime.strptime(start_date, '%Y-%m-%d') 
 	end_date = datetime.strptime(end_date, '%Y-%m-%d')
 
-	analyses = analyse(data_path, start_date, end_date, label, out_path, gen_title)
+	analyses = launch_analyses(data_path, start_date, end_date, label, out_path, gen_title)
+	
+	# save reports to file
+	#
 	for analysis in analyses:
-
 		report_file_path = out_path + analysis.name.replace(' ','') + '.txt'
 		with open(report_file_path, 'wt') as report_file:
 			report_file.write('\n'.join(analysis.report))

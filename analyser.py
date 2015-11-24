@@ -75,7 +75,6 @@ def gen_dual_series_scatter_plot(symbol, dates, values, volume, start_date, end_
 	# volume plot, same x axis, diff y axis
 	v = np.array(volume_slice)
 	got_vol_series = False
-	print(len(v), len(x))
 	if ((volume_slice != None) and (len(v) == len(x))):  
 		ax2 = ax.twinx()   
 		fig.autofmt_xdate(rotation=90)
@@ -318,7 +317,7 @@ def gen_intraday_volatility_plots(symbol, dates, high, low, close, start_date, e
 
 	return fever_fig, dist_fig
  
-def gen_analyses(symbol, start_date, end_date, dates, openn, high, low, close, volume, output_root, gen_title):
+def analyse(symbol, start_date, end_date, dates, openn, high, low, close, volume, output_root, gen_title):
 	
 	analyses = []
 		
@@ -399,17 +398,19 @@ def tick_info(slice_start_date, slice_end_date):
 	'''
 	return appropriate - visually attractive and informative - (formatter, locator) for data series
 	'''  
+
 	duration = slice_end_date - slice_start_date  
-	day_count = duration.days
-	if (day_count < 0):
-		day_count = - day_count  
+	day_count = abs(duration.days)
+
 	desired_interval_count = 10
 	interval_day_length = day_count / desired_interval_count
 	formatter = None # '%Y-%m-%d'
 	locator = None  
-	if interval_day_length > 365:    
+
+	if interval_day_length > 365:    		
+		year_tick = int(interval_day_length / 365)
 		formatter = mpl.dates.DateFormatter('%Y')
-		locator = mpl.dates.YearLocator(10)
+		locator = mpl.dates.YearLocator(year_tick)
 		interval_year_length = interval_day_length / 365
 	elif interval_day_length > 30:
 		formatter = mpl.dates.DateFormatter('%Y-%m')
